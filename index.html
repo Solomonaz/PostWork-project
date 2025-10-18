@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Logger</title>
+    <style>
+        body{
+            font-family: Arial; max-width: 600px; margin:0 auto; padding: 2 0px;
+        }
+        input, button {width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box;}
+        table {width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td {border: 1px solid #add; padding: 8px; text-align: left;}
+    </style>
+</head>
+<body>
+    <h2>Weather Logger</h2>
+    <form id="weatherForm">
+        <input type="date" id="date" required>
+        <input type="time" id="time" required>
+        <input type="number" id="temprature" placeholder="Enter etmprature in (C)" step="0.1" required>
+        <button type="submit">Log Temprature</button>
+    </form>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Temprature (C)</th>
+            </tr>
+        </thead>
+        <tbody id="weatherData"></tbody>
+    </table>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function(){
+        function loadData(){
+                return JSON.parse(localStorage.getItem('weatherData')) || [];
+            }
+            function saveData(data){
+                localStorage.setItem('weatherData', JSON.stringify(data));
+            }
+            function displayData(){
+                const data = loadData()
+                const tbody = document.getElementById('weatherData');
+                console.log("tbody: ", tbody);
+                console.log(document.getElementById('weatherData'));
+                tbody.innerHTML = data.map(entry => 
+                    `<tr><td>${entry.date}</td><td>${entry.time}</td><td>${entry.temp}C</td></tr>`
+                ).join('');
+            }
+            document.getElementById('weatherForm').addEventListener('submit', function(e){
+                e.preventDefault();
+                const newEntry = {
+                    date: document.getElementById('date').value,
+                    time: document.getElementById('time').value,
+                    temp: document.getElementById('temprature').value,
+                };
+                const data = loadData();
+                data.push(newEntry);
+                saveData(data);
+                displayData();
+                this.reset();
+            });
+            displayData()
+    });
+        
+    </script>
+</body>
+</html>
